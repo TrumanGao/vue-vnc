@@ -14,14 +14,15 @@
   },
   "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "src/lib"
   ],
   "main": "./dist/vue-vnc.cjs",
-  "module": "./dist/vue-vnc.js",
+  "module": "./src/lib/index.ts",
   "exports": {
     ".": {
       "require": "./dist/vue-vnc.cjs",
-      "import": "./dist/vue-vnc.js"
+      "import": "./src/lib/index.ts"
     }
   },
   "author": "TrumanGao",

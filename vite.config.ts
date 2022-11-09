@@ -30,7 +30,7 @@ export default defineConfig(({ command }) => {
           lib: {
             entry: resolve(__dirname, "./src/lib/index.ts"),
             name: "VueVnc",
-            formats: ["es", "cjs"],
+            formats: ["cjs"],
           },
           copyPublicDir: false,
           rollupOptions: {
