@@ -315,3 +315,41 @@ declare module "@novnc/novnc/core/rfb" {
     clipboardPasteFrom(text: string): void;
   }
 }
+
+interface Props {
+  // address
+  url: string;
+  // view
+  style?: StyleValue;
+  // connection
+  rfbOptions?: NoVncOptions;
+  autoConnect?: boolean;
+  retryDuration?: number;
+  // console
+  debug?: boolean;
+  // properties
+  viewOnly?: boolean;
+  focusOnClick?: boolean;
+  clipViewport?: boolean;
+  dragViewport?: boolean;
+  scaleViewport?: boolean;
+  resizeSession?: boolean;
+  showDotCursor?: boolean;
+  background?: string;
+  qualityLevel?: number;
+  compressionLevel?: number;
+  // listener
+  onConnect?: (rfb?: RFB) => void;
+  onDisconnect?: (rfb?: RFB) => void;
+  // others
+  onCredentialsRequired?: (rfb?: RFB) => void;
+  onSecurityFailure?: (e?: {
+    detail: { status: number; reason: string };
+  }) => void;
+  onClipboard?: (e?: { detail: { text: string } }) => void;
+  onBell?: () => void;
+  onDesktopName?: (e?: { detail: { name: string } }) => void;
+  onCapabilities?: (e?: {
+    detail: { capabilities: RFB["capabilities"] };
+  }) => void;
+}
