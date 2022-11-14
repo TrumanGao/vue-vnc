@@ -316,7 +316,7 @@ declare module "@novnc/novnc/core/rfb" {
   }
 }
 
-interface Props {
+interface VueVncProps {
   // address
   url: string;
   // view

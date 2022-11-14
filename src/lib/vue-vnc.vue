@@ -11,7 +11,7 @@ import RFB, {
   type NoVncEvents,
 } from "@novnc/novnc/core/rfb";
 
-interface Props {
+interface VueVncProps {
   // address
   url: string;
   // view
@@ -49,7 +49,7 @@ interface Props {
   }) => void;
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<VueVncProps>(), {
   autoConnect: true,
   retryDuration: 3000,
   debug: false,
