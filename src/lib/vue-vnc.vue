@@ -371,7 +371,12 @@ export default {
 };
 </script>
 <template>
-  <div :style="props.style" class="vue-vnc_main" ref="screen"></div>
+  <div
+    v-show="!loading"
+    :style="props.style"
+    class="vue-vnc_main"
+    ref="screen"
+  ></div>
   <template v-if="loading">
     <slot name="loading"><div class="vue-vnc_loading">加载中...</div></slot>
   </template>
@@ -381,8 +386,8 @@ export default {
 .vue-vnc_main,
 .vue-vnc_loading {
   box-sizing: border-box;
-  width: 1024px;
-  height: 768px;
+  width: 100%;
+  height: 100%;
   background-color: #ffffff;
 }
 
