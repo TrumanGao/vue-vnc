@@ -20,10 +20,21 @@ interface RFBOptions {
 }
 
 interface Props {
+  // address
   url: string;
+  // view
   style?: StyleValue;
-  viewOnly?: boolean;
+  // connection
   rfbOptions?: Partial<RFBOptions>;
+  autoConnect?: boolean;
+  retryDuration?: number;
+  // console
+  debug?: boolean;
+  // listener
+  onConnect?: (rfb?: RFB) => void;
+  onDisconnect?: (rfb?: RFB) => void;
+  // properties
+  viewOnly?: boolean;
   focusOnClick?: boolean;
   clipViewport?: boolean;
   dragViewport?: boolean;
@@ -33,12 +44,8 @@ interface Props {
   background?: string;
   qualityLevel?: number;
   compressionLevel?: number;
-  autoConnect?: boolean;
-  retryDuration?: number;
-  debug?: boolean;
-  loadingUI?: HTMLDivElement;
-  onConnect?: (rfb?: RFB) => void;
-  onDisconnect?: (rfb?: RFB) => void;
+
+  // others
   onCredentialsRequired?: (rfb?: RFB) => void;
   onSecurityFailure?: (e?: {
     detail: { status: number; reason: string };
@@ -364,30 +371,27 @@ export default {
 };
 </script>
 <template>
-  <div
-    :style="props.style"
-    class="vue-vnc_main"
-    ref="screen"
-    @mouseenter="handleMouseEnter"
-    @mouseleave="handleMouseLeave"
-  ></div>
+  <div :style="props.style" class="vue-vnc_main" ref="screen"></div>
   <template v-if="loading">
-    <template v-if="loadingUI">{{ loadingUI }}</template>
-    <div v-else class="vue-vnc_loading">加载中...</div>
+    <slot name="loading"><div class="vue-vnc_loading">加载中...</div></slot>
   </template>
 </template>
 
 <style scoped>
-.vue-vnc_main {
+.vue-vnc_main,
+.vue-vnc_loading {
+  box-sizing: border-box;
   width: 1024px;
   height: 768px;
+  background-color: #ffffff;
 }
 
 .vue-vnc_loading {
-  font-weight: bold;
-  width: 70px;
-  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 18px;
-  transform: translate(calc((1024px - 70px) / 2), calc((-768px - 30px) / 2));
+  font-weight: bold;
+  color: #333333;
 }
 </style>
