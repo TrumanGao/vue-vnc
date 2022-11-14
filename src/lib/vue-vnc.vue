@@ -3,21 +3,13 @@ import {
   onMounted,
   ref,
   withDefaults,
-  onUnmounted,
+  onBeforeUnmount,
   type StyleValue,
 } from "vue";
-import RFB from "@novnc/novnc/core/rfb";
-
-interface RFBOptions {
-  shared: boolean;
-  credentials: {
-    username?: string;
-    password?: string;
-    target?: string;
-  };
-  repeaterID: string;
-  wsProtocols: string;
-}
+import RFB, {
+  type NoVncOptions,
+  type NoVncEvents,
+} from "@novnc/novnc/core/rfb";
 
 interface Props {
   // address
@@ -25,14 +17,11 @@ interface Props {
   // view
   style?: StyleValue;
   // connection
-  rfbOptions?: Partial<RFBOptions>;
+  rfbOptions?: NoVncOptions;
   autoConnect?: boolean;
   retryDuration?: number;
   // console
   debug?: boolean;
-  // listener
-  onConnect?: (rfb?: RFB) => void;
-  onDisconnect?: (rfb?: RFB) => void;
   // properties
   viewOnly?: boolean;
   focusOnClick?: boolean;
@@ -44,7 +33,9 @@ interface Props {
   background?: string;
   qualityLevel?: number;
   compressionLevel?: number;
-
+  // listener
+  onConnect?: (rfb?: RFB) => void;
+  onDisconnect?: (rfb?: RFB) => void;
   // others
   onCredentialsRequired?: (rfb?: RFB) => void;
   onSecurityFailure?: (e?: {
@@ -58,38 +49,6 @@ interface Props {
   }) => void;
 }
 
-enum Events {
-  connect,
-  disconnect,
-  credentialsrequired,
-  securityfailure,
-  clipboard,
-  bell,
-  desktopname,
-  capabilities,
-}
-
-type EventListeners = {
-  -readonly [key in keyof typeof Events]?: (e?: any) => void;
-};
-
-type VncScreenHandle = {
-  connect: () => void;
-  disconnect: () => void;
-  connected: boolean;
-  sendCredentials: (credentials: RFBOptions["credentials"]) => void;
-  sendKey: (keysym: number, code: string, down?: boolean) => void;
-  sendCtrlAltDel: () => void;
-  focus: () => void;
-  blur: () => void;
-  machineShutdown: () => void;
-  machineReboot: () => void;
-  machineReset: () => void;
-  clipboardPaste: (text: string) => void;
-  rfb: RFB | null;
-  eventListeners: EventListeners;
-};
-
 const props = withDefaults(defineProps<Props>(), {
   autoConnect: true,
   retryDuration: 3000,
@@ -98,9 +57,21 @@ const props = withDefaults(defineProps<Props>(), {
 const rfb = ref<RFB | null>(null);
 const connected = ref<boolean>(props.autoConnect ?? true);
 const timeouts = ref<Array<any>>([]);
-const eventListeners = ref<EventListeners>({});
+const eventListeners = ref<{
+  -readonly [Event in keyof NoVncEvents]?: (e: any) => void;
+}>({});
 const screen = ref<HTMLDivElement | null>(null);
 const loading = ref<boolean>(true);
+
+onMounted(() => {
+  if (props.autoConnect) {
+    connect();
+  }
+});
+
+onBeforeUnmount(() => {
+  disconnect();
+});
 
 const logger = {
   log: (...args: any[]) => {
@@ -194,7 +165,7 @@ const disconnect = () => {
     }
 
     timeouts.value.forEach(clearTimeout);
-    (Object.keys(eventListeners.value) as (keyof typeof Events)[]).forEach(
+    (Object.keys(eventListeners.value) as (keyof NoVncEvents)[]).forEach(
       (event) => {
         if (eventListeners.value[event]) {
           rfb.removeEventListener(event, eventListeners.value[event]);
@@ -255,7 +226,7 @@ const connect = () => {
     eventListeners.value.desktopname = _onDesktopName;
     eventListeners.value.capabilities = props.onCapabilities;
 
-    (Object.keys(eventListeners.value) as (keyof typeof Events)[]).forEach(
+    (Object.keys(eventListeners.value) as (keyof NoVncEvents)[]).forEach(
       (event) => {
         if (eventListeners.value[event]) {
           _rfb.addEventListener(event, eventListeners.value[event]);
@@ -269,7 +240,7 @@ const connect = () => {
   }
 };
 
-const sendCredentials = (credentials: RFBOptions["credentials"]) => {
+const sendCredentials = (credentials: NoVncOptions["credentials"]) => {
   const rfb = getRfb();
   rfb?.sendCredentials(credentials);
 };
@@ -330,40 +301,6 @@ defineExpose({
   rfb: rfb.value,
   eventListeners: eventListeners.value,
 });
-
-onMounted(() => {
-  if (props.autoConnect) {
-    connect();
-  }
-});
-
-onUnmounted(() => {
-  disconnect();
-});
-
-const handleClick = () => {
-  const rfb = getRfb();
-  if (!rfb) return;
-
-  rfb.focus();
-};
-
-const handleMouseEnter = () => {
-  if (document.activeElement && document.activeElement instanceof HTMLElement) {
-    document.activeElement.blur();
-  }
-
-  handleClick();
-};
-
-const handleMouseLeave = () => {
-  const rfb = getRfb();
-  if (!rfb) {
-    return;
-  }
-
-  rfb.blur();
-};
 </script>
 <script lang="ts">
 export default {
@@ -378,7 +315,7 @@ export default {
     ref="screen"
   ></div>
   <template v-if="loading">
-    <slot name="loading"><div class="vue-vnc_loading">加载中...</div></slot>
+    <slot name="loading"><div class="vue-vnc_loading">Loading...</div></slot>
   </template>
 </template>
 
