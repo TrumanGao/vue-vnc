@@ -1,6 +1,6 @@
 {
   "name": "vue-vnc",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A Vue Component to connect to a websockified VNC client using noVNC.",
   "private": false,
   "scripts": {
@@ -15,7 +15,8 @@
   "type": "module",
   "files": [
     "dist",
-    "src/lib"
+    "src/lib",
+    "index.d.ts"
   ],
   "main": "./dist/vue-vnc.cjs",
   "module": "./src/lib/index.ts",
