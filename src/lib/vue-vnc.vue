@@ -4,6 +4,7 @@ import {
   ref,
   withDefaults,
   onBeforeUnmount,
+  watch,
   type StyleValue,
 } from "vue";
 import RFB, {
@@ -62,6 +63,13 @@ const eventListeners = ref<{
 }>({});
 const screen = ref<HTMLDivElement | null>(null);
 const loading = ref<boolean>(true);
+
+watch(
+  () => props.url,
+  (url: string) => {
+    connect();
+  }
+);
 
 onMounted(() => {
   if (props.autoConnect) {

@@ -1,6 +1,6 @@
 {
   "name": "vue-vnc",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A Vue Component to connect to a websockified VNC client using noVNC.",
   "private": false,
   "scripts": {
