@@ -1,6 +1,6 @@
 # vue-vnc
 
-vue-vnc is a vue component to connect to a websockified VNC client using noVNC. It is based on vue3.0 and @novnc/novnc.
+A Vue Component, adapted from the popular [react-vnc](https://github.com/roerohan/react-vnc), to connect to a websockified VNC client using [noVNC](https://github.com/novnc/noVNC).
 
 ## Project Setup
 
@@ -20,18 +20,19 @@ npm run dev
 
 As a vue plugin, vue-vnc should be installed firstly in "/src/main". After that, the usage demo in "/src/App.vue" shows how to use it in a vue component. The only requeired param is "url", which specifies the VNC server to connect to.
 
-`/src/main`
+`/src/main.ts`
+
 ```js
 import { createApp } from "vue";
 import App from "./App.vue";
-import VueVnc from "./lib/index";
+import VueVnc from "vue-vnc";
 
 const app = createApp(App);
 app.use(VueVnc);
-app.mount("#root");
 ```
 
 `/src/App.vue`
+
 ```vue
 <template>
   <VueVnc :url="wssUrl"></VueVnc>
