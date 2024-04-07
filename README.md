@@ -18,7 +18,7 @@ npm run dev
 
 ### Usage
 
-As a vue plugin, vue-vnc should be installed firstly in "/src/main". After that, the usage demo in "/src/App.vue" shows how to use it in a vue component. The only requeired param is "url", which specifies the VNC server to connect to.
+As a vue plugin, vue-vnc should be installed firstly in "/src/main". After that, the usage demo in "/src/App.vue" shows how to use it in a vue component. The only required param is "url", which specifies the VNC server to connect to.
 
 `/src/main.ts`
 
